@@ -96,7 +96,7 @@ public class Converter {
             // First row contains column headings
             String[] headers = csvData.get(0);
             for (String header : headers) {
-                colHeadings.add(header);
+                colHeadings.add(header.replace("\"",""));
             }
 
             // Remaining rows contain data
@@ -113,6 +113,9 @@ public class Converter {
                 data.add(rowData);
             }
         }
+        else{
+            System.out.println("CSV data is empty.");
+        }
 
         // Add arrays to JSON object
         jsonObject.put("ColHeadings", colHeadings);
@@ -127,6 +130,7 @@ public class Converter {
     
     
     }
+
         return result.trim();
     }
     @SuppressWarnings("unchecked")
@@ -148,14 +152,14 @@ public static String jsonToCsv(String jsonString) {
         
             String[] header = new String[colHeadings.size()];
                 for (int i = 0; i < colHeadings.size(); i++) {
-                header[i] = (String) colHeadings.get(i);
+                header[i] = colHeadings.get(i).toString();
                 }
             csvData.add(header);
         
             for (int i = 0; i < data.size(); i++) {
                 JsonArray rowData = (JsonArray) data.get(i);
                 String[] row = new String[rowData.size() + 1];
-                row[0] = (String) prodNums.get(i);
+                row[0] = prodNums.get(i).toString();
                 for (int j = 0; j < rowData.size(); j++) {
                     row[j + 1] = rowData.get(j).toString();
                 }
@@ -164,19 +168,20 @@ public static String jsonToCsv(String jsonString) {
         
         StringBuilder csvFile = new StringBuilder();
         
-        String csvString = csvFile.toString().trim();
+        String csvString = csvFile.toString();
         
         CSVReader reader = new CSVReader(new StringReader(csvString));
-        List<String[]> full = reader.readAll();
+        //List<String[]> full = reader.readAll();
         
-        if (!full.isEmpty()) {
-            Iterator<String[]> iterator = full.iterator();
+        System.out.println(csvData.isEmpty());
+        if (!csvData.isEmpty()) {
+            Iterator<String[]> iterator = csvData.iterator();
             String[] line = iterator.next();
                 for (String field : line) {
                 System.out.println(field);
                 }
         } else {
-            System.out.println("CSV data is empty.");
+           System.out.println("json data is empty.");
         }
 
 
@@ -188,7 +193,6 @@ public static String jsonToCsv(String jsonString) {
         catch (Exception e) {
             e.printStackTrace();
         }
-        
         return result.trim();
 }
        
